@@ -195,10 +195,12 @@ public class SpringApplication {
 
 	private static final Log logger = LogFactory.getLog(SpringApplication.class);
 
+	// 启动程序类
 	private Set<Class<?>> primarySources;
 
 	private Set<String> sources = new LinkedHashSet<>();
 
+	// main 启动类 RuntimeException
 	private Class<?> mainApplicationClass;
 
 	private Banner.Mode bannerMode = Banner.Mode.CONSOLE;
@@ -219,14 +221,17 @@ public class SpringApplication {
 
 	private Class<? extends ConfigurableApplicationContext> applicationContextClass;
 
+	// web应用程序类型的枚举
 	private WebApplicationType webApplicationType;
 
 	private boolean headless = true;
 
 	private boolean registerShutdownHook = true;
 
+	// 所有应用上下文初始化器
 	private List<ApplicationContextInitializer<?>> initializers;
 
+	// 所有应用监听器
 	private List<ApplicationListener<?>> listeners;
 
 	private Map<String, Object> defaultProperties;
@@ -269,11 +274,14 @@ public class SpringApplication {
 		Assert.notNull(primarySources, "PrimarySources must not be null");
 		this.primarySources = new LinkedHashSet<>(Arrays.asList(primarySources));
 		this.webApplicationType = WebApplicationType.deduceFromClasspath();
-		setInitializers((Collection) getSpringFactoriesInstances(ApplicationContextInitializer.class));
-		setListeners((Collection) getSpringFactoriesInstances(ApplicationListener.class));
+		// 1步： 获取所有 应用上下文初始化器 ApplicationContextInitializer
+		setInitializers((Collection) getSpringFactoriesInstances(ApplicationContextInitializer.class)); //
+		// 2步： 或有所有 应用监听器 ApplicationListener
+		setListeners((Collection) getSpringFactoriesInstances(ApplicationListener.class)); //
 		this.mainApplicationClass = deduceMainApplicationClass();
 	}
 
+	// 推论Main应用类
 	private Class<?> deduceMainApplicationClass() {
 		try {
 			StackTraceElement[] stackTrace = new RuntimeException().getStackTrace();
@@ -1176,11 +1184,6 @@ public class SpringApplication {
 		return asUnmodifiableOrderedSet(this.initializers);
 	}
 
-	/**
-	 * Sets the {@link ApplicationListener}s that will be applied to the SpringApplication
-	 * and registered with the {@link ApplicationContext}.
-	 * @param listeners the listeners to set
-	 */
 	public void setListeners(Collection<? extends ApplicationListener<?>> listeners) {
 		this.listeners = new ArrayList<>(listeners);
 	}

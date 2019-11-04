@@ -19,11 +19,7 @@ package org.springframework.boot;
 import org.springframework.util.ClassUtils;
 
 /**
- * An enumeration of possible types of web application.
- *
- * @author Andy Wilkinson
- * @author Brian Clozel
- * @since 2.0.0
+ * 可能的web应用程序类型的枚举
  */
 public enum WebApplicationType {
 
