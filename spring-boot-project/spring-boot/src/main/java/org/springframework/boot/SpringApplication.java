@@ -213,6 +213,7 @@ public class SpringApplication {
 
 	private Banner banner;
 
+	// 资源加载器（类加载器）
 	private ResourceLoader resourceLoader;
 
 	private BeanNameGenerator beanNameGenerator;
@@ -225,7 +226,7 @@ public class SpringApplication {
 	private WebApplicationType webApplicationType;
 
 	private boolean headless = true;
-
+	// 注册停止钩子 true
 	private boolean registerShutdownHook = true;
 
 	// 所有应用上下文初始化器
@@ -245,28 +246,16 @@ public class SpringApplication {
 	private boolean lazyInitialization = false;
 
 	/**
-	 * Create a new {@link SpringApplication} instance. The application context will load
-	 * beans from the specified primary sources (see {@link SpringApplication class-level}
-	 * documentation for details. The instance can be customized before calling
-	 * {@link #run(String...)}.
-	 * @param primarySources the primary bean sources
-	 * @see #run(Class, String[])
-	 * @see #SpringApplication(ResourceLoader, Class...)
-	 * @see #setSources(Set)
+	 * 创建一个新的{@link SpringApplication}实例应用程序上下文将从指定的主源加载bean
+	 * （有关详细信息，请参阅{@link SpringApplication class level}文档）。可以在调用之前自定义实例
 	 */
 	public SpringApplication(Class<?>... primarySources) {
 		this(null, primarySources);
 	}
 
 	/**
-	 * Create a new {@link SpringApplication} instance. The application context will load
-	 * beans from the specified primary sources (see {@link SpringApplication class-level}
-	 * documentation for details. The instance can be customized before calling
-	 * {@link #run(String...)}.
-	 * @param resourceLoader the resource loader to use
-	 * @param primarySources the primary bean sources
-	 * @see #run(Class, String[])
-	 * @see #setSources(Set)
+	 * 创建一个新的{@link SpringApplication}实例应用程序上下文将从指定的主源加载bean
+	 * （有关详细信息，请参阅{@link SpringApplication  class level}文档）。可以在调用之前自定义实例
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public SpringApplication(ResourceLoader resourceLoader, Class<?>... primarySources) {
@@ -298,9 +287,8 @@ public class SpringApplication {
 	}
 
 	/**
-	 * Run the Spring application, creating and refreshing a new
-	 * {@link ApplicationContext}.
-	 * @param args the application arguments (usually passed from a Java main method)
+	 * 运行Spring应用程序，创建并刷新一个新的{@link ApplicationContext}
+	 * @param args 应用程序参数（通常从Java主方法传递）
 	 * @return a running {@link ApplicationContext}
 	 */
 	public ConfigurableApplicationContext run(String... args) {
@@ -308,7 +296,7 @@ public class SpringApplication {
 		stopWatch.start();
 		ConfigurableApplicationContext context = null;
 		Collection<SpringBootExceptionReporter> exceptionReporters = new ArrayList<>();
-		configureHeadlessProperty();
+		configureHeadlessProperty();	// 配置系统属性
 		SpringApplicationRunListeners listeners = getRunListeners(args);
 		listeners.starting();
 		try {
@@ -418,25 +406,29 @@ public class SpringApplication {
 				System.getProperty(SYSTEM_PROPERTY_JAVA_AWT_HEADLESS, Boolean.toString(this.headless)));
 	}
 
+	// 获取所有运行中的监听器 SpringApplicationRunListeners
 	private SpringApplicationRunListeners getRunListeners(String[] args) {
 		Class<?>[] types = new Class<?>[] { SpringApplication.class, String[].class };
 		return new SpringApplicationRunListeners(logger,
-				getSpringFactoriesInstances(SpringApplicationRunListener.class, types, this, args));
+				getSpringFactoriesInstances(SpringApplicationRunListener.class, types, this, args)); // 封装s
 	}
 
 	private <T> Collection<T> getSpringFactoriesInstances(Class<T> type) {
 		return getSpringFactoriesInstances(type, new Class<?>[] {});
 	}
 
+	// 获取SpringApplicationListener.class 集合
 	private <T> Collection<T> getSpringFactoriesInstances(Class<T> type, Class<?>[] parameterTypes, Object... args) {
 		ClassLoader classLoader = getClassLoader();
-		// Use names and ensure unique to protect against duplicates
+		// 使用名称并确保唯一以防止重复 Set ， names 为 SpringApplicationListener 对应的spring.factories 文件中的值集合
 		Set<String> names = new LinkedHashSet<>(SpringFactoriesLoader.loadFactoryNames(type, classLoader));
+		// 创建 spring.factories 配置文件 SpringApplicationListener.class 映射的类名实例集合
 		List<T> instances = createSpringFactoriesInstances(type, parameterTypes, classLoader, args, names);
 		AnnotationAwareOrderComparator.sort(instances);
 		return instances;
 	}
 
+	// 创建 spring.factories 对应的 type.class 对应的值的集合对象
 	@SuppressWarnings("unchecked")
 	private <T> List<T> createSpringFactoriesInstances(Class<T> type, Class<?>[] parameterTypes,
 			ClassLoader classLoader, Object[] args, Set<String> names) {
@@ -1219,27 +1211,16 @@ public class SpringApplication {
 	}
 
 	/**
-	 * Static helper that can be used to run a {@link SpringApplication} from the
-	 * specified sources using default settings and user supplied arguments.
-	 * @param primarySources the primary sources to load
-	 * @param args the application arguments (usually passed from a Java main method)
-	 * @return the running {@link ApplicationContext}
+	 * 静态帮助程序，可用于使用默认设置和用户提供的参数从指定源运行{@link SpringApplication}
+	 * @param primarySources 要加载的主要源
+	 * @param args 应用程序参数（通常从Java主方法传递）
 	 */
 	public static ConfigurableApplicationContext run(Class<?>[] primarySources, String[] args) {
 		return new SpringApplication(primarySources).run(args);
 	}
 
 	/**
-	 * A basic main that can be used to launch an application. This method is useful when
-	 * application sources are defined via a {@literal --spring.main.sources} command line
-	 * argument.
-	 * <p>
-	 * Most developers will want to define their own main method and call the
-	 * {@link #run(Class, String...) run} method instead.
-	 * @param args command line arguments
-	 * @throws Exception if the application cannot be started
-	 * @see SpringApplication#run(Class[], String[])
-	 * @see SpringApplication#run(Class, String...)
+	 * 可用于启动应用程序的基本主机当通过{@literal--spring.main.sources}命令行参数定义应用程序源时，此方法非常有用
 	 */
 	public static void main(String[] args) throws Exception {
 		SpringApplication.run(new Class<?>[0], args);
