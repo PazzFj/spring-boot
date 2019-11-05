@@ -217,7 +217,7 @@ public class SpringApplication {
 	private ResourceLoader resourceLoader;
 
 	private BeanNameGenerator beanNameGenerator;
-
+    //自动装配环境
 	private ConfigurableEnvironment environment;
 
 	private Class<? extends ConfigurableApplicationContext> applicationContextClass;
@@ -232,7 +232,7 @@ public class SpringApplication {
 	// 所有应用上下文初始化器
 	private List<ApplicationContextInitializer<?>> initializers;
 
-	// 所有应用监听器
+	// 所有应用监听器, 在初始化的时候赋值. 从 spring.factories 配置文件中读取
 	private List<ApplicationListener<?>> listeners;
 
 	private Map<String, Object> defaultProperties;
@@ -297,11 +297,17 @@ public class SpringApplication {
 		ConfigurableApplicationContext context = null;
 		Collection<SpringBootExceptionReporter> exceptionReporters = new ArrayList<>();
 		configureHeadlessProperty();	// 配置系统属性
-		SpringApplicationRunListeners listeners = getRunListeners(args);
+		// EventPublishingRunListener 为 spring.factories 配置对象,  为 SpringApplicationRunListener 的实现类
+		// 封装成 SpringApplicationRunListeners 对象 通过 listeners 所有监听器
+		SpringApplicationRunListeners listeners = getRunListeners(args); //
+		// 调用 spring.factories 中配置的事件发布监听器, 通过线程池全部执行 starting() 方法
 		listeners.starting();
 		try {
+		    // 应用参数
 			ApplicationArguments applicationArguments = new DefaultApplicationArguments(args);
+			// 准备环境 => StandardServletEnvironment
 			ConfigurableEnvironment environment = prepareEnvironment(listeners, applicationArguments);
+			// 配置忽视的bean信息
 			configureIgnoreBeanInfo(environment);
 			Banner printedBanner = printBanner(environment);
 			context = createApplicationContext();
@@ -406,18 +412,18 @@ public class SpringApplication {
 				System.getProperty(SYSTEM_PROPERTY_JAVA_AWT_HEADLESS, Boolean.toString(this.headless)));
 	}
 
-	// 获取所有运行中的监听器 SpringApplicationRunListeners
+	// 1、通过 spring.factories 配置文件获取 SpringApplicationRunListener.class 的实现类
+	// 2、封装成 SpringApplicationRunListeners 对象()
 	private SpringApplicationRunListeners getRunListeners(String[] args) {
 		Class<?>[] types = new Class<?>[] { SpringApplication.class, String[].class };
-		return new SpringApplicationRunListeners(logger,
-				getSpringFactoriesInstances(SpringApplicationRunListener.class, types, this, args)); // 封装s
+		return new SpringApplicationRunListeners(logger, getSpringFactoriesInstances(SpringApplicationRunListener.class, types, this, args)); // 封装s
 	}
 
 	private <T> Collection<T> getSpringFactoriesInstances(Class<T> type) {
 		return getSpringFactoriesInstances(type, new Class<?>[] {});
 	}
 
-	// 获取SpringApplicationListener.class 集合
+	// 获取 SpringApplicationRunListener.class 集合
 	private <T> Collection<T> getSpringFactoriesInstances(Class<T> type, Class<?>[] parameterTypes, Object... args) {
 		ClassLoader classLoader = getClassLoader();
 		// 使用名称并确保唯一以防止重复 Set ， names 为 SpringApplicationListener 对应的spring.factories 文件中的值集合
@@ -429,6 +435,7 @@ public class SpringApplication {
 	}
 
 	// 创建 spring.factories 对应的 type.class 对应的值的集合对象
+	// 创建 EventPublishingRunListener 对象， 构造器参数需要 SpringApplication & String[]
 	@SuppressWarnings("unchecked")
 	private <T> List<T> createSpringFactoriesInstances(Class<T> type, Class<?>[] parameterTypes,
 			ClassLoader classLoader, Object[] args, Set<String> names) {
@@ -1055,9 +1062,7 @@ public class SpringApplication {
 	}
 
 	/**
-	 * Sets the underlying environment that should be used with the created application
-	 * context.
-	 * @param environment the environment
+	 * 设置应与创建的应用程序上下文一起使用的基础环境
 	 */
 	public void setEnvironment(ConfigurableEnvironment environment) {
 		this.isCustomEnvironment = true;
@@ -1190,10 +1195,16 @@ public class SpringApplication {
 	}
 
 	/**
-	 * Returns read-only ordered Set of the {@link ApplicationListener}s that will be
-	 * applied to the SpringApplication and registered with the {@link ApplicationContext}
-	 * .
-	 * @return the listeners
+	 *  org.springframework.context.ApplicationListener=\
+	 * 	org.springframework.boot.ClearCachesApplicationListener,\
+	 * 	org.springframework.boot.builder.ParentContextCloserApplicationListener,\
+	 * 	org.springframework.boot.context.FileEncodingApplicationListener,\
+	 * 	org.springframework.boot.context.config.AnsiOutputApplicationListener,\
+	 * 	org.springframework.boot.context.config.ConfigFileApplicationListener,\
+	 * 	org.springframework.boot.context.config.DelegatingApplicationListener,\
+	 * 	org.springframework.boot.context.logging.ClasspathLoggingApplicationListener,\
+	 * 	org.springframework.boot.context.logging.LoggingApplicationListener,\
+	 * 	org.springframework.boot.liquibase.LiquibaseServiceLocatorApplicationListener
 	 */
 	public Set<ApplicationListener<?>> getListeners() {
 		return asUnmodifiableOrderedSet(this.listeners);

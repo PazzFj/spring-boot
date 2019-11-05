@@ -22,76 +22,51 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 
 /**
- * Listener for the {@link SpringApplication} {@code run} method.
- * {@link SpringApplicationRunListener}s are loaded via the {@link SpringFactoriesLoader}
- * and should declare a public constructor that accepts a {@link SpringApplication}
- * instance and a {@code String[]} of arguments. A new
- * {@link SpringApplicationRunListener} instance will be created for each run.
- *
- * @author Phillip Webb
- * @author Dave Syer
- * @author Andy Wilkinson
- * @since 1.0.0
+ * 事件发布运行监听器
+ * EventPublishingRunListener 为唯一实现类
  */
 public interface SpringApplicationRunListener {
 
 	/**
-	 * Called immediately when the run method has first started. Can be used for very
-	 * early initialization.
+	 * 在run方法首次启动时立即调用。可用于非常早的初始化
 	 */
 	default void starting() {
 	}
 
 	/**
-	 * Called once the environment has been prepared, but before the
-	 * {@link ApplicationContext} has been created.
-	 * @param environment the environment
+	 * 在这之前一旦环境准备好
 	 */
 	default void environmentPrepared(ConfigurableEnvironment environment) {
 	}
 
 	/**
-	 * Called once the {@link ApplicationContext} has been created and prepared, but
-	 * before sources have been loaded.
-	 * @param context the application context
+	 * 在创建并准备{@link ApplicationContext}之后，但在加载源之前调用
 	 */
 	default void contextPrepared(ConfigurableApplicationContext context) {
 	}
 
 	/**
-	 * Called once the application context has been loaded but before it has been
-	 * refreshed.
-	 * @param context the application context
+	 * 在加载应用程序上下文后刷新之前调用
 	 */
 	default void contextLoaded(ConfigurableApplicationContext context) {
 	}
 
 	/**
-	 * The context has been refreshed and the application has started but
-	 * {@link CommandLineRunner CommandLineRunners} and {@link ApplicationRunner
-	 * ApplicationRunners} have not been called.
-	 * @param context the application context.
-	 * @since 2.0.0
+	 * 上下文已刷新，应用程序已启动，但尚未调用{@link CommandLineRunner CommandLineRunners}和
+	 * {@link ApplicationRunner ApplicationRunners}
 	 */
 	default void started(ConfigurableApplicationContext context) {
 	}
 
 	/**
-	 * Called immediately before the run method finishes, when the application context has
-	 * been refreshed and all {@link CommandLineRunner CommandLineRunners} and
-	 * {@link ApplicationRunner ApplicationRunners} have been called.
-	 * @param context the application context.
-	 * @since 2.0.0
+	 * 在run方法完成之前调用，此时应用程序上下文已刷新并且所有{@link CommandLineRunner CommandLineRunners}和
+	 * {@link ApplicationRunner ApplicationRunners}都已调用
 	 */
 	default void running(ConfigurableApplicationContext context) {
 	}
 
 	/**
-	 * Called when a failure occurs when running the application.
-	 * @param context the application context or {@code null} if a failure occurred before
-	 * the context was created
-	 * @param exception the failure
-	 * @since 2.0.0
+	 * 当一个失败的事物运行时呼叫
 	 */
 	default void failed(ConfigurableApplicationContext context, Throwable exception) {
 	}

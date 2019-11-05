@@ -32,16 +32,9 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.util.ErrorHandler;
 
 /**
- * {@link SpringApplicationRunListener} to publish {@link SpringApplicationEvent}s.
+ * {@link SpringApplicationRunListener}发布{@link SpringApplicationEvent}。
  * <p>
- * Uses an internal {@link ApplicationEventMulticaster} for the events that are fired
- * before the context is actually refreshed.
- *
- * @author Phillip Webb
- * @author Stephane Nicoll
- * @author Andy Wilkinson
- * @author Artsiom Yudovin
- * @since 1.0.0
+ * 对在实际刷新上下文之前触发的事件使用内部{@link ApplicationEventMulticaster}
  */
 public class EventPublishingRunListener implements SpringApplicationRunListener, Ordered {
 
@@ -49,6 +42,16 @@ public class EventPublishingRunListener implements SpringApplicationRunListener,
 
 	private final String[] args;
 
+	//org.springframework.context.ApplicationListener=\
+	//org.springframework.boot.ClearCachesApplicationListener,\
+	//org.springframework.boot.builder.ParentContextCloserApplicationListener,\
+	//org.springframework.boot.context.FileEncodingApplicationListener,\
+	//org.springframework.boot.context.config.AnsiOutputApplicationListener,\
+	//org.springframework.boot.context.config.ConfigFileApplicationListener,\
+	//org.springframework.boot.context.config.DelegatingApplicationListener,\
+	//org.springframework.boot.context.logging.ClasspathLoggingApplicationListener,\
+	//org.springframework.boot.context.logging.LoggingApplicationListener,\
+	//org.springframework.boot.liquibase.LiquibaseServiceLocatorApplicationListener
 	private final SimpleApplicationEventMulticaster initialMulticaster;
 
 	public EventPublishingRunListener(SpringApplication application, String[] args) {
@@ -67,6 +70,7 @@ public class EventPublishingRunListener implements SpringApplicationRunListener,
 
 	@Override
 	public void starting() {
+		// multicast 多播  event 事件
 		this.initialMulticaster.multicastEvent(new ApplicationStartingEvent(this.application, this.args));
 	}
 
