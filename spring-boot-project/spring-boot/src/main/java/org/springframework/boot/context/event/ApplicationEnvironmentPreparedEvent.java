@@ -21,11 +21,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 
 /**
- * Event published when a {@link SpringApplication} is starting up and the
- * {@link Environment} is first available for inspection and modification.
- *
- * @author Dave Syer
- * @since 1.0.0
+ * 当{@link SpringApplication}正在启动并且{@link Environment}首先可供检查和修改时发布的事件
  */
 @SuppressWarnings("serial")
 public class ApplicationEnvironmentPreparedEvent extends SpringApplicationEvent {
@@ -34,9 +30,6 @@ public class ApplicationEnvironmentPreparedEvent extends SpringApplicationEvent 
 
 	/**
 	 * Create a new {@link ApplicationEnvironmentPreparedEvent} instance.
-	 * @param application the current application
-	 * @param args the arguments the application is running with
-	 * @param environment the environment that was just created
 	 */
 	public ApplicationEnvironmentPreparedEvent(SpringApplication application, String[] args,
 			ConfigurableEnvironment environment) {
@@ -46,7 +39,6 @@ public class ApplicationEnvironmentPreparedEvent extends SpringApplicationEvent 
 
 	/**
 	 * Return the environment.
-	 * @return the environment
 	 */
 	public ConfigurableEnvironment getEnvironment() {
 		return this.environment;
