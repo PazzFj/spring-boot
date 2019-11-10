@@ -32,9 +32,8 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.util.ErrorHandler;
 
 /**
- * {@link SpringApplicationRunListener}发布{@link SpringApplicationEvent}。
- * <p>
  * 对在实际刷新上下文之前触发的事件使用内部{@link ApplicationEventMulticaster}
+ * {@link SimpleApplicationEventMulticaster}  简单应用事件广播器
  */
 public class EventPublishingRunListener implements SpringApplicationRunListener, Ordered {
 
@@ -42,16 +41,7 @@ public class EventPublishingRunListener implements SpringApplicationRunListener,
 
 	private final String[] args;
 
-	//org.springframework.context.ApplicationListener=\
-	//org.springframework.boot.ClearCachesApplicationListener,\
-	//org.springframework.boot.builder.ParentContextCloserApplicationListener,\
-	//org.springframework.boot.context.FileEncodingApplicationListener,\
-	//org.springframework.boot.context.config.AnsiOutputApplicationListener,\
-	//org.springframework.boot.context.config.ConfigFileApplicationListener,\
-	//org.springframework.boot.context.config.DelegatingApplicationListener,\
-	//org.springframework.boot.context.logging.ClasspathLoggingApplicationListener,\
-	//org.springframework.boot.context.logging.LoggingApplicationListener,\
-	//org.springframework.boot.liquibase.LiquibaseServiceLocatorApplicationListener
+	// 应用事件广播器
 	private final SimpleApplicationEventMulticaster initialMulticaster;
 
 	public EventPublishingRunListener(SpringApplication application, String[] args) {
