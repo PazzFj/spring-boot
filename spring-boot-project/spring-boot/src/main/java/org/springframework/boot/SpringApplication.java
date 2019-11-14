@@ -290,8 +290,7 @@ public class SpringApplication {
 		ConfigurableApplicationContext context = null;
 		Collection<SpringBootExceptionReporter> exceptionReporters = new ArrayList<>();
 		configureHeadlessProperty();	// 配置系统属性
-		// EventPublishingRunListener 为 spring.factories 配置对象,  为 SpringApplicationRunListener 的实现类
-		// 封装成 SpringApplicationRunListeners 对象 通过 listeners 所有监听器
+		// 获取 SpringApplicationRunListener 的实现类 EventPublishingRunListener, 并封装
 		SpringApplicationRunListeners listeners = getRunListeners(args); //
 		// 调用 spring.factories 中配置的事件发布监听器, 通过线程池全部执行 starting() 方法
 		listeners.starting();
@@ -432,33 +431,31 @@ public class SpringApplication {
 	// 2、把 SpringApplicationRunListener 实现类 、 SpringApplication.class、 当前SpringApplication对象。封装成 SpringApplicationRunListeners
 	private SpringApplicationRunListeners getRunListeners(String[] args) {
 		Class<?>[] types = new Class<?>[] { SpringApplication.class, String[].class };
-		return new SpringApplicationRunListeners(logger, getSpringFactoriesInstances(SpringApplicationRunListener.class, types, this, args)); // 封装s
+		return new SpringApplicationRunListeners(logger, getSpringFactoriesInstances(SpringApplicationRunListener.class, types, this, args)); // run listener
 	}
 
 	private <T> Collection<T> getSpringFactoriesInstances(Class<T> type) {
 		return getSpringFactoriesInstances(type, new Class<?>[] {});
 	}
 
-	// 获取 SpringApplicationRunListener.class 集合
 	/**
-	 * 根据type类类型创建对应的映射对象实例
-	 * @param type 类类型
-	 * @param parameterTypes 构造器参数
+	 * 通过 spring.factories 配置文件加载对应的映射类路径 调用对应的构造器初始化对象
+	 * @param type class类型
+	 * @param parameterTypes 对应的构造器参数类型
 	 * @param args 构造器参数实例
 	 * @param <T> 返回类类型的实例
 	 */
 	private <T> Collection<T> getSpringFactoriesInstances(Class<T> type, Class<?>[] parameterTypes, Object... args) {
 		ClassLoader classLoader = getClassLoader();
-		// 使用名称并确保唯一以防止重复 Set ， names 为 SpringApplicationListener 对应的spring.factories 文件中的值集合
+		// 获取 spring.factories 文件中type对应的映射的类名集合, 去除重复的name
 		Set<String> names = new LinkedHashSet<>(SpringFactoriesLoader.loadFactoryNames(type, classLoader));
-		// 创建 spring.factories 配置文件 SpringApplicationListener.class 映射的类名实例集合
+		// 通过获取的names, 遍历初始化对应的构造器创建对象
 		List<T> instances = createSpringFactoriesInstances(type, parameterTypes, classLoader, args, names);
 		AnnotationAwareOrderComparator.sort(instances);
 		return instances;
 	}
 
-	// 创建 spring.factories 对应的 type.class 对应的值的集合对象
-	// 创建 EventPublishingRunListener 对象， 构造器参数需要 SpringApplication & String[]
+	// 创建 spring.factories 获取的类路径实例对象, 通过对应的构造器参数类型创建对象
 	@SuppressWarnings("unchecked")
 	private <T> List<T> createSpringFactoriesInstances(Class<T> type, Class<?>[] parameterTypes,
 			ClassLoader classLoader, Object[] args, Set<String> names) {
