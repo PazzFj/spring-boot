@@ -229,7 +229,7 @@ public class SpringApplication {
 	private Set<String> additionalProfiles = new HashSet<>();
 	// 允许BeanDefinition覆盖  默认为true
 	private boolean allowBeanDefinitionOverriding;
-
+	// 是否自定义环境
 	private boolean isCustomEnvironment = false;
 	// 是否懒加载 (用于bean工厂后置处理器)
 	private boolean lazyInitialization = false;
@@ -527,13 +527,8 @@ public class SpringApplication {
 	}
 
 	/**
-	 * Configure which profiles are active (or active by default) for this application
-	 * environment. Additional profiles may be activated during configuration file
-	 * processing via the {@code spring.profiles.active} property.
-	 * @param environment this application's environment
-	 * @param args arguments passed to the {@code run} method
-	 * @see #configureEnvironment(ConfigurableEnvironment, String[])
-	 * @see org.springframework.boot.context.config.ConfigFileApplicationListener
+	 * 为此应用程序环境配置哪些配置文件处于活动状态（或默认处于活动状态）。
+	 * 在配置文件处理期间，可以通过{@code spring.profiles.active}属性激活其他配置文件
 	 */
 	protected void configureProfiles(ConfigurableEnvironment environment, String[] args) {
 		Set<String> profiles = new LinkedHashSet<>(this.additionalProfiles);

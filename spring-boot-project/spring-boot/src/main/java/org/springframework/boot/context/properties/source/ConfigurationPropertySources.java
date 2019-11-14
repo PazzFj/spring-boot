@@ -29,45 +29,19 @@ import org.springframework.core.env.PropertySourcesPropertyResolver;
 import org.springframework.util.Assert;
 
 /**
- * Provides access to {@link ConfigurationPropertySource ConfigurationPropertySources}.
- *
- * @author Phillip Webb
- * @since 2.0.0
+ * 提供访问 {@link ConfigurationPropertySource ConfigurationPropertySources}.
  */
 public final class ConfigurationPropertySources {
 
-	/**
-	 * The name of the {@link PropertySource} {@link #adapt adapter}.
-	 */
 	private static final String ATTACHED_PROPERTY_SOURCE_NAME = "configurationProperties";
 
 	private ConfigurationPropertySources() {
 	}
 
-	/**
-	 * Determines if the specific {@link PropertySource} is the
-	 * {@link ConfigurationPropertySource} that was {@link #attach(Environment) attached}
-	 * to the {@link Environment}.
-	 * @param propertySource the property source to test
-	 * @return {@code true} if this is the attached {@link ConfigurationPropertySource}
-	 */
 	public static boolean isAttachedConfigurationPropertySource(PropertySource<?> propertySource) {
 		return ATTACHED_PROPERTY_SOURCE_NAME.equals(propertySource.getName());
 	}
 
-	/**
-	 * Attach a {@link ConfigurationPropertySource} support to the specified
-	 * {@link Environment}. Adapts each {@link PropertySource} managed by the environment
-	 * to a {@link ConfigurationPropertySource} and allows classic
-	 * {@link PropertySourcesPropertyResolver} calls to resolve using
-	 * {@link ConfigurationPropertyName configuration property names}.
-	 * <p>
-	 * The attached resolver will dynamically track any additions or removals from the
-	 * underlying {@link Environment} property sources.
-	 * @param environment the source environment (must be an instance of
-	 * {@link ConfigurableEnvironment})
-	 * @see #get(Environment)
-	 */
 	public static void attach(Environment environment) {
 		Assert.isInstanceOf(ConfigurableEnvironment.class, environment);
 		MutablePropertySources sources = ((ConfigurableEnvironment) environment).getPropertySources();
@@ -82,15 +56,6 @@ public final class ConfigurationPropertySources {
 		}
 	}
 
-	/**
-	 * Return a set of {@link ConfigurationPropertySource} instances that have previously
-	 * been {@link #attach(Environment) attached} to the {@link Environment}.
-	 * @param environment the source environment (must be an instance of
-	 * {@link ConfigurableEnvironment})
-	 * @return an iterable set of configuration property sources
-	 * @throws IllegalStateException if not configuration property sources have been
-	 * attached
-	 */
 	public static Iterable<ConfigurationPropertySource> get(Environment environment) {
 		Assert.isInstanceOf(ConfigurableEnvironment.class, environment);
 		MutablePropertySources sources = ((ConfigurableEnvironment) environment).getPropertySources();
@@ -102,30 +67,10 @@ public final class ConfigurationPropertySources {
 		return attached.getSource();
 	}
 
-	/**
-	 * Return {@link Iterable} containing a single new {@link ConfigurationPropertySource}
-	 * adapted from the given Spring {@link PropertySource}.
-	 * @param source the Spring property source to adapt
-	 * @return an {@link Iterable} containing a single newly adapted
-	 * {@link SpringConfigurationPropertySource}
-	 */
 	public static Iterable<ConfigurationPropertySource> from(PropertySource<?> source) {
 		return Collections.singleton(SpringConfigurationPropertySource.from(source));
 	}
 
-	/**
-	 * Return {@link Iterable} containing new {@link ConfigurationPropertySource}
-	 * instances adapted from the given Spring {@link PropertySource PropertySources}.
-	 * <p>
-	 * This method will flatten any nested property sources and will filter all
-	 * {@link StubPropertySource stub property sources}. Updates to the underlying source,
-	 * identified by changes in the sources returned by its iterator, will be
-	 * automatically tracked. The underlying source should be thread safe, for example a
-	 * {@link MutablePropertySources}
-	 * @param sources the Spring property sources to adapt
-	 * @return an {@link Iterable} containing newly adapted
-	 * {@link SpringConfigurationPropertySource} instances
-	 */
 	public static Iterable<ConfigurationPropertySource> from(Iterable<PropertySource<?>> sources) {
 		return new SpringConfigurationPropertySources(sources);
 	}
