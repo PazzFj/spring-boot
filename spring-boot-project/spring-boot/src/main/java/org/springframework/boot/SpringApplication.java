@@ -198,7 +198,7 @@ public class SpringApplication {
 
 	private boolean addConversionService = true;
 
-	// 横幅
+	// 打印横幅
 	private Banner banner;
 
 	// 资源加载器（类加载器）
