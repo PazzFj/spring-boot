@@ -59,36 +59,8 @@ import org.springframework.web.context.support.ServletContextScope;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
- * A {@link WebApplicationContext} that can be used to bootstrap itself from a contained
- * {@link ServletWebServerFactory} bean.
- * <p>
- * This context will create, initialize and run an {@link WebServer} by searching for a
- * single {@link ServletWebServerFactory} bean within the {@link ApplicationContext}
- * itself. The {@link ServletWebServerFactory} is free to use standard Spring concepts
- * (such as dependency injection, lifecycle callbacks and property placeholder variables).
- * <p>
- * In addition, any {@link Servlet} or {@link Filter} beans defined in the context will be
- * automatically registered with the web server. In the case of a single Servlet bean, the
- * '/' mapping will be used. If multiple Servlet beans are found then the lowercase bean
- * name will be used as a mapping prefix. Any Servlet named 'dispatcherServlet' will
- * always be mapped to '/'. Filter beans will be mapped to all URLs ('/*').
- * <p>
- * For more advanced configuration, the context can instead define beans that implement
- * the {@link ServletContextInitializer} interface (most often
- * {@link ServletRegistrationBean}s and/or {@link FilterRegistrationBean}s). To prevent
- * double registration, the use of {@link ServletContextInitializer} beans will disable
- * automatic Servlet and Filter bean registration.
- * <p>
- * Although this context can be used directly, most developers should consider using the
- * {@link AnnotationConfigServletWebServerApplicationContext} or
- * {@link XmlServletWebServerApplicationContext} variants.
- *
- * @author Phillip Webb
- * @author Dave Syer
- * @since 2.0.0
- * @see AnnotationConfigServletWebServerApplicationContext
- * @see XmlServletWebServerApplicationContext
- * @see ServletWebServerFactory
+ * 小服务程序 web 服务应用上下文
+ * 可用于从包含的{@link ServletWebServerFactory} bean引导自身的{@link WebApplicationContext}
  */
 public class ServletWebServerApplicationContext extends GenericWebApplicationContext
 		implements ConfigurableWebServerApplicationContext {
