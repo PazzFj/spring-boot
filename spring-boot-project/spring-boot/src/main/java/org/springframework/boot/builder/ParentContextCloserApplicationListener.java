@@ -29,13 +29,8 @@ import org.springframework.core.Ordered;
 import org.springframework.util.ObjectUtils;
 
 /**
- * Listener that closes the application context if its parent is closed. It listens for
- * refresh events and grabs the current context from there, and then listens for closed
- * events and propagates it down the hierarchy.
- *
- * @author Dave Syer
- * @author Eric Bottard
- * @since 1.0.0
+ * 侦听器，该侦听器在其父应用程序上下文关闭时关闭该应用程序上下文。
+ * 它侦听刷新事件并从中获取当前上下文，然后侦听关闭事件并沿层次结构向下传播
  */
 public class ParentContextCloserApplicationListener
 		implements ApplicationListener<ParentContextAvailableEvent>, ApplicationContextAware, Ordered {
@@ -67,10 +62,7 @@ public class ParentContextCloserApplicationListener
 	}
 
 	/**
-	 * Subclasses may override to create their own subclass of ContextCloserListener. This
-	 * still enforces the use of a weak reference.
-	 * @param child the child context
-	 * @return the {@link ContextCloserListener} to use
+	 * 子类可以覆盖创建自己的ContextCloserListener子类。这仍然强制使用弱引用
 	 */
 	protected ContextCloserListener createContextCloserListener(ConfigurableApplicationContext child) {
 		return new ContextCloserListener(child);

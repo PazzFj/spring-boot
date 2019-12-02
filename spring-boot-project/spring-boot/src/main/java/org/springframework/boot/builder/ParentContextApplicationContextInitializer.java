@@ -80,7 +80,7 @@ public class ParentContextApplicationContextInitializer
 	}
 
 	/**
-	 * {@link ApplicationEvent} fired when a parent context is available.
+	 * 当父上下文可用时触发{@link ApplicationEvent}
 	 */
 	@SuppressWarnings("serial")
 	public static class ParentContextAvailableEvent extends ApplicationEvent {
