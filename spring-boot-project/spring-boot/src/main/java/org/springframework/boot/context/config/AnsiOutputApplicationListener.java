@@ -25,13 +25,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.env.ConfigurableEnvironment;
 
 /**
- * An {@link ApplicationListener} that configures {@link AnsiOutput} depending on the
- * value of the property {@code spring.output.ansi.enabled}. See {@link Enabled} for valid
- * values.
- *
- * @author Raphael von der Grün
- * @author Madhura Bhave
- * @since 1.2.0
+ * 一个{@link ApplicationListener}根据属性{@code spring.output.ansi.enabled}的值配置{@link AnsiOutput}。有关有效值，请参见{@link Enabled}
  */
 public class AnsiOutputApplicationListener
 		implements ApplicationListener<ApplicationEnvironmentPreparedEvent>, Ordered {
@@ -39,14 +33,13 @@ public class AnsiOutputApplicationListener
 	@Override
 	public void onApplicationEvent(ApplicationEnvironmentPreparedEvent event) {
 		ConfigurableEnvironment environment = event.getEnvironment();
-		Binder.get(environment).bind("spring.output.ansi.enabled", AnsiOutput.Enabled.class)
-				.ifBound(AnsiOutput::setEnabled);
+		Binder.get(environment).bind("spring.output.ansi.enabled", AnsiOutput.Enabled.class).ifBound(AnsiOutput::setEnabled);
 		AnsiOutput.setConsoleAvailable(environment.getProperty("spring.output.ansi.console-available", Boolean.class));
 	}
 
 	@Override
 	public int getOrder() {
-		// Apply after ConfigFileApplicationListener has called EnvironmentPostProcessors
+		// 在ConfigFileApplicationListener调用了环境后再应用
 		return ConfigFileApplicationListener.DEFAULT_ORDER + 1;
 	}
 

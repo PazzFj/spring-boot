@@ -70,43 +70,13 @@ import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
 
 /**
- * {@link EnvironmentPostProcessor} that configures the context environment by loading
- * properties from well known file locations. By default properties will be loaded from
- * 'application.properties' and/or 'application.yml' files in the following locations:
- * <ul>
- * <li>file:./config/</li>
- * <li>file:./</li>
- * <li>classpath:config/</li>
- * <li>classpath:</li>
- * </ul>
- * The list is ordered by precedence (properties defined in locations higher in the list
- * override those defined in lower locations).
- * <p>
- * Alternative search locations and names can be specified using
- * {@link #setSearchLocations(String)} and {@link #setSearchNames(String)}.
- * <p>
- * Additional files will also be loaded based on active profiles. For example if a 'web'
- * profile is active 'application-web.properties' and 'application-web.yml' will be
- * considered.
- * <p>
- * The 'spring.config.name' property can be used to specify an alternative name to load
- * and the 'spring.config.location' property can be used to specify alternative search
- * locations or specific files.
- * <p>
  *
- * @author Dave Syer
- * @author Phillip Webb
- * @author Stephane Nicoll
- * @author Andy Wilkinson
- * @author Eddú Meléndez
- * @author Madhura Bhave
- * @since 1.0.0
  */
 public class ConfigFileApplicationListener implements EnvironmentPostProcessor, SmartApplicationListener, Ordered {
 
 	private static final String DEFAULT_PROPERTIES = "defaultProperties";
 
-	// Note the order is from least to most specific (last one wins)
+	// 注意顺序是从最小到最具体(最后一个获胜)
 	private static final String DEFAULT_SEARCH_LOCATIONS = "classpath:/,classpath:/config/,file:./,file:./config/";
 
 	private static final String DEFAULT_NAMES = "application";
@@ -172,9 +142,11 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 
 	@Override
 	public void onApplicationEvent(ApplicationEvent event) {
+		// 应用环境准备事件
 		if (event instanceof ApplicationEnvironmentPreparedEvent) {
 			onApplicationEnvironmentPreparedEvent((ApplicationEnvironmentPreparedEvent) event);
 		}
+		// 应用准备事件
 		if (event instanceof ApplicationPreparedEvent) {
 			onApplicationPreparedEvent(event);
 		}
