@@ -57,37 +57,7 @@ import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
 
 /**
- * An {@link ApplicationListener} that configures the {@link LoggingSystem}. If the
- * environment contains a {@code logging.config} property it will be used to bootstrap the
- * logging system, otherwise a default configuration is used. Regardless, logging levels
- * will be customized if the environment contains {@code logging.level.*} entries and
- * logging groups can be defined with {@code logging.group}.
- * <p>
- * Debug and trace logging for Spring, Tomcat, Jetty and Hibernate will be enabled when
- * the environment contains {@code debug} or {@code trace} properties that aren't set to
- * {@code "false"} (i.e. if you start your application using
- * {@literal java -jar myapp.jar [--debug | --trace]}). If you prefer to ignore these
- * properties you can set {@link #setParseArgs(boolean) parseArgs} to {@code false}.
- * <p>
- * By default, log output is only written to the console. If a log file is required, the
- * {@code logging.file.path} and {@code logging.file.name} properties can be used.
- * <p>
- * Some system properties may be set as side effects, and these can be useful if the
- * logging configuration supports placeholders (i.e. log4j or logback):
- * <ul>
- * <li>{@code LOG_FILE} is set to the value of path of the log file that should be written
- * (if any).</li>
- * <li>{@code PID} is set to the value of the current process ID if it can be determined.
- * </li>
- * </ul>
- *
- * @author Dave Syer
- * @author Phillip Webb
- * @author Andy Wilkinson
- * @author Madhura Bhave
- * @author HaiTao Zhang
- * @since 2.0.0
- * @see LoggingSystem#get(ClassLoader)
+ * 日志应用监听器 LoggingSystem 抽象类 -> （AbstractLoggingSystem、 NoOpLoggingSystem）  ->  （JavaLoggingSystem、 Slf4JLoggingSystem、 Log4J2LoggingSystem）
  */
 public class LoggingApplicationListener implements GenericApplicationListener {
 
@@ -101,45 +71,18 @@ public class LoggingApplicationListener implements GenericApplicationListener {
 	private static final Bindable<Map<String, List<String>>> STRING_STRINGS_MAP = Bindable
 			.of(ResolvableType.forClassWithGenerics(MultiValueMap.class, String.class, String.class).asMap());
 
-	/**
-	 * The default order for the LoggingApplicationListener.
-	 */
 	public static final int DEFAULT_ORDER = Ordered.HIGHEST_PRECEDENCE + 20;
 
-	/**
-	 * The name of the Spring property that contains a reference to the logging
-	 * configuration to load.
-	 */
 	public static final String CONFIG_PROPERTY = "logging.config";
 
-	/**
-	 * The name of the Spring property that controls the registration of a shutdown hook
-	 * to shut down the logging system when the JVM exits.
-	 * @see LoggingSystem#getShutdownHandler
-	 */
 	public static final String REGISTER_SHUTDOWN_HOOK_PROPERTY = "logging.register-shutdown-hook";
 
-	/**
-	 * The name of the {@link LoggingSystem} bean.
-	 */
 	public static final String LOGGING_SYSTEM_BEAN_NAME = "springBootLoggingSystem";
 
-	/**
-	 * The name of the {@link LogFile} bean.
-	 * @since 2.2.0
-	 */
 	public static final String LOG_FILE_BEAN_NAME = "springBootLogFile";
 
-	/**
-	 * The name of the{@link LoggerGroups} bean.
-	 * @since 2.2.0
-	 */
 	public static final String LOGGER_GROUPS_BEAN_NAME = "springBootLoggerGroups";
 
-	/**
-	 * The name of the {@link LogFile} bean.
-	 * @deprecated since 2.2.0 in favor of {@link #LOG_FILE_BEAN_NAME}
-	 */
 	@Deprecated
 	public static final String LOGFILE_BEAN_NAME = LOG_FILE_BEAN_NAME;
 
@@ -171,9 +114,9 @@ public class LoggingApplicationListener implements GenericApplicationListener {
 		SPRING_BOOT_LOGGING_LOGGERS = Collections.unmodifiableMap(loggers);
 	}
 
-	private static final Class<?>[] EVENT_TYPES = { ApplicationStartingEvent.class,
-			ApplicationEnvironmentPreparedEvent.class, ApplicationPreparedEvent.class, ContextClosedEvent.class,
-			ApplicationFailedEvent.class };
+	// 事件类型: 应用开始事件、应用环境准备事件、应用准备事件、上下文关闭事件、应用失败事件
+	private static final Class<?>[] EVENT_TYPES = { ApplicationStartingEvent.class, ApplicationEnvironmentPreparedEvent.class,
+			ApplicationPreparedEvent.class, ContextClosedEvent.class, ApplicationFailedEvent.class };
 
 	private static final Class<?>[] SOURCE_TYPES = { SpringApplication.class, ApplicationContext.class };
 
@@ -272,10 +215,7 @@ public class LoggingApplicationListener implements GenericApplicationListener {
 	}
 
 	/**
-	 * Initialize the logging system according to preferences expressed through the
-	 * {@link Environment} and the classpath.
-	 * @param environment the environment
-	 * @param classLoader the classloader
+	 * 属性表示的首选项初始化日志系统
 	 */
 	protected void initialize(ConfigurableEnvironment environment, ClassLoader classLoader) {
 		new LoggingSystemProperties(environment).apply();

@@ -26,12 +26,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.util.ClassUtils;
 
 /**
- * {@link ApplicationListener} that replaces the liquibase {@link ServiceLocator} with a
- * version that works with Spring Boot executable archives.
- *
- * @author Phillip Webb
- * @author Dave Syer
- * @since 1.0.0
+ * {@link ApplicationListener}将liquibase {@link ServiceLocator}替换为使用Spring引导可执行归档的版本
  */
 public class LiquibaseServiceLocatorApplicationListener implements ApplicationListener<ApplicationStartingEvent> {
 
@@ -39,20 +34,19 @@ public class LiquibaseServiceLocatorApplicationListener implements ApplicationLi
 
 	@Override
 	public void onApplicationEvent(ApplicationStartingEvent event) {
-		if (ClassUtils.isPresent("liquibase.servicelocator.CustomResolverServiceLocator",
-				event.getSpringApplication().getClassLoader())) {
+		if (ClassUtils.isPresent("liquibase.servicelocator.CustomResolverServiceLocator", event.getSpringApplication().getClassLoader())) {
 			new LiquibasePresent().replaceServiceLocator();
 		}
 	}
 
 	/**
+	 * 内部类以防止类未找到问题
 	 * Inner class to prevent class not found issues.
 	 */
 	private static class LiquibasePresent {
 
 		void replaceServiceLocator() {
-			CustomResolverServiceLocator customResolverServiceLocator = new CustomResolverServiceLocator(
-					new SpringPackageScanClassResolver(logger));
+			CustomResolverServiceLocator customResolverServiceLocator = new CustomResolverServiceLocator(new SpringPackageScanClassResolver(logger));
 			ServiceLocator.setInstance(customResolverServiceLocator);
 		}
 

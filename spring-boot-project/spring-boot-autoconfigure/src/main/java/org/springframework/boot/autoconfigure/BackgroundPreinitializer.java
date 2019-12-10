@@ -35,26 +35,12 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter;
 
 /**
- * {@link ApplicationListener} to trigger early initialization in a background thread of
- * time consuming tasks.
- * <p>
- * Set the {@link #IGNORE_BACKGROUNDPREINITIALIZER_PROPERTY_NAME} system property to
- * {@code true} to disable this mechanism and let such initialization happen in the
- * foreground.
- *
- * @author Phillip Webb
- * @author Andy Wilkinson
- * @author Artsiom Yudovin
- * @since 1.3.0
+ * {@link ApplicationListener} 在耗时任务的后台线程中触发早期初始化
  */
 @Order(LoggingApplicationListener.DEFAULT_ORDER + 1)
 public class BackgroundPreinitializer implements ApplicationListener<SpringApplicationEvent> {
 
 	/**
-	 * System property that instructs Spring Boot how to run pre initialization. When the
-	 * property is set to {@code true}, no pre-initialization happens and each item is
-	 * initialized in the foreground as it needs to. When the property is {@code false}
-	 * (default), pre initialization runs in a separate thread in the background.
 	 * @since 2.1.0
 	 */
 	public static final String IGNORE_BACKGROUNDPREINITIALIZER_PROPERTY_NAME = "spring.backgroundpreinitializer.ignore";
@@ -70,8 +56,7 @@ public class BackgroundPreinitializer implements ApplicationListener<SpringAppli
 				&& preinitializationStarted.compareAndSet(false, true)) {
 			performPreinitialization();
 		}
-		if ((event instanceof ApplicationReadyEvent || event instanceof ApplicationFailedEvent)
-				&& preinitializationStarted.get()) {
+		if ((event instanceof ApplicationReadyEvent || event instanceof ApplicationFailedEvent) && preinitializationStarted.get()) {
 			try {
 				preinitializationComplete.await();
 			}
@@ -145,7 +130,7 @@ public class BackgroundPreinitializer implements ApplicationListener<SpringAppli
 	}
 
 	/**
-	 * Early initializer for Jackson.
+	 * 早期初始化器 Jackson.
 	 */
 	private static class JacksonInitializer implements Runnable {
 

@@ -34,12 +34,7 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
 /**
- * {@link ApplicationListener} that delegates to other listeners that are specified under
- * a {@literal context.listener.classes} environment property.
- *
- * @author Dave Syer
- * @author Phillip Webb
- * @since 1.0.0
+ * 委托应用监听器  -> 应用环境准备事件触发该监听器
  */
 public class DelegatingApplicationListener implements ApplicationListener<ApplicationEvent>, Ordered {
 
@@ -54,8 +49,7 @@ public class DelegatingApplicationListener implements ApplicationListener<Applic
 	@Override
 	public void onApplicationEvent(ApplicationEvent event) {
 		if (event instanceof ApplicationEnvironmentPreparedEvent) {
-			List<ApplicationListener<ApplicationEvent>> delegates = getListeners(
-					((ApplicationEnvironmentPreparedEvent) event).getEnvironment());
+			List<ApplicationListener<ApplicationEvent>> delegates = getListeners(((ApplicationEnvironmentPreparedEvent) event).getEnvironment());
 			if (delegates.isEmpty()) {
 				return;
 			}
@@ -80,13 +74,10 @@ public class DelegatingApplicationListener implements ApplicationListener<Applic
 			for (String className : StringUtils.commaDelimitedListToSet(classNames)) {
 				try {
 					Class<?> clazz = ClassUtils.forName(className, ClassUtils.getDefaultClassLoader());
-					Assert.isAssignable(ApplicationListener.class, clazz,
-							"class [" + className + "] must implement ApplicationListener");
+					Assert.isAssignable(ApplicationListener.class, clazz, "class [" + className + "] must implement ApplicationListener");
 					listeners.add((ApplicationListener<ApplicationEvent>) BeanUtils.instantiateClass(clazz));
-				}
-				catch (Exception ex) {
-					throw new ApplicationContextException("Failed to load context listener class [" + className + "]",
-							ex);
+				} catch (Exception ex) {
+					throw new ApplicationContextException("Failed to load context listener class [" + className + "]", ex);
 				}
 			}
 		}

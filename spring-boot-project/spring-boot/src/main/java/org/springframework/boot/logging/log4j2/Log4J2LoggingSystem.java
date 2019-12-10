@@ -51,12 +51,6 @@ import org.springframework.util.StringUtils;
 
 /**
  * {@link LoggingSystem} for <a href="https://logging.apache.org/log4j/2.x/">Log4j 2</a>.
- *
- * @author Daniel Fullarton
- * @author Andy Wilkinson
- * @author Alexander Heusingfeld
- * @author Ben Hale
- * @since 1.2.0
  */
 public class Log4J2LoggingSystem extends Slf4JLoggingSystem {
 
