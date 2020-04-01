@@ -23,11 +23,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Hint for that an {@link EnableAutoConfiguration auto-configuration} should be applied
- * after other specified auto-configuration classes.
- *
- * @author Phillip Webb
- * @since 1.0.0
+ * 提示{@link EnableAutoConfiguration auto-configuration}应该在其他指定的自动配置类之后应用
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE })
